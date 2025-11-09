@@ -31,11 +31,12 @@ app.get("/", (req, res) => {
 async function run() {
   try {
     await client.connect();
-    console.log("✅ Connected to MongoDB successfully!");
+    console.log(" Connected to MongoDB successfully!");
 
     const db = client.db("model-bd");
     const cropsCollection = db.collection("crops");
     const usersCollection = db.collection("users");
+    const interestsCollection = db.collection("interests");
 
     // -----------------------------------------
     //  USER APIs
@@ -61,6 +62,20 @@ async function run() {
         console.error(err);
         res.status(500).send({ error: "Failed to save user" });
       }
+    });
+    // interest added
+    app.get("/interests", async (req, res) => {
+      const userEmail = req.query.userEmail;
+
+      if (!userEmail) {
+        return res.status(400).json({ message: "User email is required" });
+      }
+
+      const query = { userEmail: userEmail };
+
+      const result = await interestsCollection.find(query).toArray();
+
+      res.json(result);
     });
 
     // GET /users → Optional: fetch all users (for testing/admin)
