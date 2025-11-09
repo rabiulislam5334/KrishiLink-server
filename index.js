@@ -33,7 +33,7 @@ async function run() {
     await client.connect();
     console.log("✅ Connected to MongoDB successfully!");
 
-    const db = client.db("model-db");
+    const db = client.db("model-bd");
     const cropsCollection = db.collection("crops");
     const usersCollection = db.collection("users");
 
