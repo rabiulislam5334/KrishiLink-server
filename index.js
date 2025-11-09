@@ -38,26 +38,43 @@ async function run() {
     const usersCollection = db.collection("users");
 
     // -----------------------------------------
-    // 👤 USER APIs
+    //  USER APIs
     // -----------------------------------------
     app.post("/users", async (req, res) => {
-      const newUser = req.body;
-      const query = { email: newUser.email };
-      const existing = await usersCollection.findOne(query);
-      if (existing) {
-        return res.status(400).send({ message: "User already exists" });
+      try {
+        const newUser = req.body;
+        const query = { email: newUser.email };
+        const existingUser = await usersCollection.findOne(query);
+
+        if (existingUser) {
+          return res
+            .status(200)
+            .send({ message: "User already exists", userId: existingUser._id });
+        }
+
+        // Insert new user
+        const result = await usersCollection.insertOne(newUser);
+        res
+          .status(201)
+          .send({ message: "User created", userId: result.insertedId });
+      } catch (err) {
+        console.error(err);
+        res.status(500).send({ error: "Failed to save user" });
       }
-      const result = await usersCollection.insertOne(newUser);
-      res.send(result);
     });
 
+    // GET /users → Optional: fetch all users (for testing/admin)
     app.get("/users", async (req, res) => {
-      const users = await usersCollection.find().toArray();
-      res.send(users);
+      try {
+        const users = await usersCollection.find().toArray();
+        res.send(users);
+      } catch (err) {
+        res.status(500).send({ error: "Failed to fetch users" });
+      }
     });
 
     // -----------------------------------------
-    // 🌾 CROP APIs
+    //  CROP APIs
     // -----------------------------------------
 
     // Get all crops
