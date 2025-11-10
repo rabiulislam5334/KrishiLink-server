@@ -36,7 +36,7 @@ async function run() {
     const db = client.db("model-bd");
     const cropsCollection = db.collection("crops");
     const usersCollection = db.collection("users");
-    const interestsCollection = db.collection("interests");
+    // const interestsCollection = db.collection("interests");
 
     // -----------------------------------------
     //  USER APIs
@@ -64,18 +64,37 @@ async function run() {
       }
     });
     // interest added
+    // Get user's interests from crops collection
     app.get("/interests", async (req, res) => {
       const userEmail = req.query.userEmail;
-
       if (!userEmail) {
-        return res.status(400).json({ message: "User email is required" });
+        return res.status(400).send({ message: "Missing user email" });
       }
 
-      const query = { userEmail: userEmail };
+      const crops = await cropsCollection.find().toArray();
 
-      const result = await interestsCollection.find(query).toArray();
+      // user-এর interests বের করো
+      const userInterests = [];
+      crops.forEach((crop) => {
+        if (Array.isArray(crop.interests)) {
+          crop.interests.forEach((interest) => {
+            if (interest.userEmail === userEmail) {
+              userInterests.push({
+                cropId: crop._id,
+                cropName: crop.name,
+                image: crop.image,
+                location: crop.location,
+                pricePerUnit: crop.pricePerUnit,
+                quantity: interest.quantity,
+                message: interest.message,
+                status: interest.status,
+              });
+            }
+          });
+        }
+      });
 
-      res.json(result);
+      res.send(userInterests);
     });
 
     // GET /users → Optional: fetch all users (for testing/admin)
