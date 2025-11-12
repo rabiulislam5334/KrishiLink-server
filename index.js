@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 // --- Main Function ---
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     console.log(" Connected to MongoDB successfully!");
 
     const db = client.db("model-bd");
@@ -277,7 +277,7 @@ async function run() {
     });
 
     // -----------------------------------------
-    // ✅ Ping to confirm connection
+    //
     // -----------------------------------------
     // await client.db("admin").command({ ping: 1 });
     console.log(" KrishiLink server connected and running properly!");
