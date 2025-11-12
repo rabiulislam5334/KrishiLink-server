@@ -280,9 +280,9 @@ async function run() {
     // ✅ Ping to confirm connection
     // -----------------------------------------
     await client.db("admin").command({ ping: 1 });
-    console.log("🚀 KrishiLink server connected and running properly!");
+    console.log(" KrishiLink server connected and running properly!");
   } catch (error) {
-    console.error("❌ Error connecting to MongoDB:", error);
+    console.error(" Error connecting to MongoDB:", error);
   }
 }
 
